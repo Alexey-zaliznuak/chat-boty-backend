@@ -48,7 +48,7 @@ async def run_migrations_online() -> None:
         )
 
         async with connection.begin():
-            context.run_migrations()
+            connection.run_sync(context.run_migrations())
 
 if context.is_offline_mode():
     run_migrations_offline()
