@@ -8,10 +8,6 @@ from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 
 
-def generate_file_path(mapper, connection, target):
-    target.file = f'/data/{target.id}/content.html'
-
-
 class Post(Base):
     __tablename__ = 'posts'
 
