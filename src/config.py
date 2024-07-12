@@ -1,5 +1,4 @@
 from os import getenv as env
-from typing import overload
 from dotenv import load_dotenv
 
 
@@ -8,7 +7,7 @@ load_dotenv()
 
 class NotProvided: ...
 
-# TODO use popular configs libs
+# TODO use configs libs
 class BaseConfig:
     DATABASE_URL: str = ...
 

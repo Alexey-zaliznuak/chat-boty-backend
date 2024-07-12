@@ -17,7 +17,7 @@ class PaginationParams(BaseModel):
     def offset(self) -> int:
         return (self.page - 1) * self.size
 
-    def apply_pagination(self, query: "Query") -> "Query":
+    def apply_to_query(self, query: "Query") -> "Query":
         return query.limit(self.size).offset(self.offset)
 
 

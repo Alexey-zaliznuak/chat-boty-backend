@@ -7,3 +7,4 @@ class PostsConfig(BaseConfig):
 
     POSTS_FILE_NAME = "content"
     POSTS_FILE_EXTENSION = "html"
+    POSTS_FILE_MEDIA_TYPE = "text/html"
