@@ -13,22 +13,24 @@ from fastapi.responses import FileResponse
 from fastapi_restful.cbv import cbv
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.infrastructure.auth.dependencies import authorization
 from src.database import get_async_session
 from src.infrastructure.route.pagination import (
     PaginatedResponse,
     PaginationParams,
     get_pagination_params
 )
+from src.infrastructure.auth import authorization
 
 from .config import PostsConfig as Config
-from .dependencies import validate_post_id
+from .dependencies import validate_post_id, get_post_filter_params
 from .models import Post
 from .schemas import (
     BasicPost,
     CreatePost,
     GetPostResponse,
     PostFilterParams,
-    get_post_filter_params
+    UpdatePost,
 )
 from .service import PostsService
 
@@ -69,7 +71,7 @@ class PostsView:
 
 
     @router.post("/", response_model=GetPostResponse)
-    async def create_post(self, data: CreatePost):
+    async def create_post(self, data: CreatePost, auth: None = Depends(authorization)):
         new_post = Post(
             title=data.title,
             short_description=data.short_description,
@@ -83,11 +85,28 @@ class PostsView:
         return new_post
 
 
+    @router.patch("/{post_id}", response_model=GetPostResponse)
+    async def update_by_id(
+        self,
+        data: UpdatePost,
+        post: Post = Depends(validate_post_id),
+        auth: None = Depends(authorization),
+    ):
+        await self.service.update_instance_fields(
+            post,
+            data=data.model_dump(exclude_unset=True),
+            session=self.session,
+            save=True,
+        )
+        return post
+
+
     @router.put("/{post_id}/file", response_model=GetPostResponse)
     async def upload_post_file(
         self,
         file: UploadFile = File(...),
-        post: Post = Depends(validate_post_id)
+        post: Post = Depends(validate_post_id),
+        auth: None = Depends(authorization),
     ):
         await self.service.update_instance_fields(
             post,
@@ -100,7 +119,9 @@ class PostsView:
 
     @router.delete("/{post_id}", response_model=GetPostResponse)
     async def delete_post_by_id(
-        self, post: BasicPost = Depends(validate_post_id)
+        self,
+        post: BasicPost = Depends(validate_post_id),
+        auth: None = Depends(authorization)
     ):
         try:
             await self.service.delete_by_id(post.id, post.file, self.session)

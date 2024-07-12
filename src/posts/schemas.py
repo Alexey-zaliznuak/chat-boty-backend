@@ -3,9 +3,10 @@ from fastapi import Query
 from pydantic import BaseModel, Field, model_validator
 from datetime import datetime
 from uuid import UUID
-from src.infrastructure.database.types import Where
 
-from src.infrastructure.filtering import BaseFilterModel
+from src.infrastructure.database.types import Where
+from src.infrastructure.database.filtering import BaseFilterModel
+
 from .models import Post
 
 
@@ -62,9 +63,6 @@ class PostFilterParams(BaseModel, BaseFilterModel):
             return Post.file.is_not(None)
 
         return None
-
-def get_post_filter_params(has_file: Optional[bool] = Query(None)) -> PostFilterParams:
-    return PostFilterParams(has_file=has_file)
 
 
 class CreatePost(BasicEditablePost):

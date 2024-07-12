@@ -22,6 +22,8 @@ class BaseConfig:
     ARTIFACT_DIRECTORY: str = "data"
     STATIC_DIRECTORY: str = "static"
 
+    AUTHORIZATION_KEY: str = ...
+
     def __init__(self) -> None:
         for env_variable_config_name in [attr for attr in self.__dir__() if not attr.startswith("__")]:
             value = self.__getattribute__(env_variable_config_name)

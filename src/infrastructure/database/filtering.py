@@ -1,4 +1,4 @@
-from src.infrastructure.database.types import ConvertibleToWhere
+from .types import ConvertibleToWhere
 
 
 class BaseFilterModel():

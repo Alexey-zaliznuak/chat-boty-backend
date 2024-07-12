@@ -1,4 +1,4 @@
-from typing import Any, Literal, TypeVar
+from typing import Any, TypeVar
 from uuid import UUID
 
 from fastapi import HTTPException, status
@@ -6,10 +6,9 @@ from pydantic import BaseModel
 from sqlalchemy import delete, func, select, and_, true
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.infrastructure.utils.singleton import SingletonMeta
 from src.infrastructure.route.pagination import PaginatedResponse, PaginationParams
-from src.infrastructure.filtering import BaseFilterModel
 
+from .filtering import BaseFilterModel
 from .types import ConvertibleToWhere, Data, Where
 
 
@@ -66,7 +65,14 @@ class BaseORMService:
             total_items=total_objects[0]
         )
 
-    async def update_instance_fields(self, instance: T, data: Data, *, session: AsyncSession = None, save: bool = False) -> T:
+    async def update_instance_fields(
+        self,
+        instance: T,
+        data: Data,
+        *,
+        session: AsyncSession = None,
+        save: bool = False
+    ) -> T:
         """
         Can automatically save updates, with provided session and save.
         """
