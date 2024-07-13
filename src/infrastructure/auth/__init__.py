@@ -1,2 +1,1 @@
-# from .access import access_control
-from .dependencies import authorization
+from ._access import admin_access

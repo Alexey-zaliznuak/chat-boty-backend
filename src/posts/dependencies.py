@@ -1,7 +1,7 @@
 from typing import Any
 from uuid import UUID
 
-from fastapi import Depends, Query
+from fastapi import Depends, Query, Request
 from .schemas import PostFilterParams
 
 from src.database import get_async_session
