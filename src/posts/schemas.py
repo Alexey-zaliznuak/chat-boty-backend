@@ -22,7 +22,7 @@ class BasicPost(BaseModel):
     file: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class BasicEditablePost(BaseModel):
@@ -31,7 +31,7 @@ class BasicEditablePost(BaseModel):
     reading_time: int = Field(gt=0, le=120)
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class GetPostResponse(BaseModel):

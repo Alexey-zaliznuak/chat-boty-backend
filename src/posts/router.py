@@ -134,7 +134,7 @@ class PostsView:
         return post
 
 
-    @router.delete("/{post_id}", response_model=GetPostResponse)
+    @router.delete("/{post_id}", response_model=None)
     @admin_access()
     async def delete_post_by_id(
         self,
