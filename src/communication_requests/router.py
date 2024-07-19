@@ -19,9 +19,9 @@ class CommunicationRequestsView:
     service = CommunicationRequestsService()
 
     @router.post("/", response_model=None)
-    @limiter.limit("1/minute")
+    @limiter.limit("3/minute")
     async def create_post(self, data: CreateCommunicationRequest, request: Request):
-        await self.telegram_service.notify_in_admin_group(
+        await self.service.send_new_communication_request_message_to_admins(
             contact_type=data.contact_type,
             contact=data.value
         )
