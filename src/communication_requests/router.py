@@ -23,4 +23,4 @@ class CommunicationRequestsView:
     @limiter.limit("3/minute")
     async def create_post(self, data: CreateCommunicationRequest, request: Request):
         await self.service.send_new_communication_request_message_to_admins(data)
-        return Response(status=status.HTTP_200_OK)
+        return Response(status_code=status.HTTP_200_OK)
