@@ -9,5 +9,5 @@ class ContactType(str, Enum):
 
 class CreateCommunicationRequest(BaseModel):
     contact_type: ContactType
-    name: str
+    name: str | None
     value: str
