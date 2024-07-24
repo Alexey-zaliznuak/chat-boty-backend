@@ -27,10 +27,10 @@ class HTMLFormatter:
     @staticmethod
     def header(text: str, level: int = 1) -> str:
         """Create a header."""
-        if 1 <= level <= 6:
-            return f'<h{level}>{text}</h{level}>'
-        else:
+        if not (1 <= level <= 6):
             raise ValueError("Header level must be between 1 and 6")
+
+        return f'<h{level}>{text}</h{level}>'
 
     @staticmethod
     def unordered_list(items: list[str]) -> str:

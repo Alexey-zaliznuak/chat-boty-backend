@@ -3,6 +3,7 @@ from fastapi import (
     Request,
     Response,
 )
+from starlette import status
 from fastapi_restful.cbv import cbv
 
 from src.infrastructure.rate_limit import limiter
@@ -19,11 +20,7 @@ class CommunicationRequestsView:
     service = CommunicationRequestsService()
 
     @router.post("/", response_model=None)
-    @limiter.limit("1/minute")
+    @limiter.limit("3/minute")
     async def create_post(self, data: CreateCommunicationRequest, request: Request):
-        await self.telegram_service.notify_in_admin_group(
-            contact_type=data.contact_type,
-            contact=data.value
-        )
-
-        return Response()
+        await self.service.send_new_communication_request_message_to_admins(data)
+        return Response(status_code=status.HTTP_200_OK)
