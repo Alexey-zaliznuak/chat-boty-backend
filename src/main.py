@@ -1,3 +1,4 @@
+from typing import Literal
 from fastapi import APIRouter, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -37,7 +38,7 @@ v1_router.include_router(communication_requests_router)
 app.include_router(v1_router)
 
 
-@app.get("/ping")
+@app.get("/ping", response_model=Literal["pong"])
 def ping():
     return {"message": "pong"}
 

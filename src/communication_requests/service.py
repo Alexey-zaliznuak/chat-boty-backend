@@ -1,6 +1,6 @@
 from src.external.telegram.service import TelegramService
-from src.infrastructure.utils.html_formatter import HTMLFormatter
-from src.infrastructure.utils.singleton import SingletonMeta
+from src.utils import HTMLFormatter
+from src.utils import SingletonMeta
 
 from .schemas import CreateCommunicationRequest
 

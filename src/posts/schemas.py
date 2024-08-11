@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import Optional
 from fastapi import Query
 from pydantic import BaseModel, Field, model_validator
@@ -16,13 +17,20 @@ class BasicPost(BaseModel):
     updated_at: datetime
 
     title: str = Field(max_length=100)
+    slug: str = Field(max_length=150)
     short_description: str = Field(max_length=300)
     reading_time: int = Field(gt=0, le=120)
 
-    file: str
+    content_file: str
+    preview_file: str
 
     class Config:
         from_attributes = True
+
+
+class UniqueFieldsEnum(str, Enum):
+    id = "id"
+    slug = "slug"
 
 
 class BasicEditablePost(BaseModel):
@@ -40,6 +48,7 @@ class GetPostResponse(BaseModel):
     updated_at: datetime
 
     title: str = Field(max_length=100)
+    slug: str = Field(max_length=150)
     short_description: str = Field(max_length=300)
     reading_time: int = Field(gt=0, le=120)
 
@@ -71,5 +80,6 @@ class CreatePost(BasicEditablePost):
 
 class UpdatePost(BaseModel):
     title: Optional[str] = Field(None, max_length=100)
+    slug: Optional[str] = Field(None, max_length=150)
     short_description: Optional[str] = Field(None, max_length=300)
     reading_time: Optional[int] = Field(None, gt=0, le=120)
