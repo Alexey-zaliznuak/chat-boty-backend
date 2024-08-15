@@ -57,7 +57,7 @@ class GetPostResponse(BaseModel):
 
 
 class PostFilterParams(BaseModel, BaseFilterModel):
-    has_file: Optional[bool] = Query(None)
+    hasFullContent : Optional[bool] = Query(None)
 
     def to_where_statement(self) -> Where:
         return [
@@ -65,11 +65,17 @@ class PostFilterParams(BaseModel, BaseFilterModel):
         ]
 
     def to_where_has_file(self) -> Where:
-        if self.has_file == False:
-            return Post.file.is_(None)
+        if self.hasFullContent == True:
+            return [
+                Post.content_file.is_not(None),
+                Post.preview_file.is_not(None),
+            ]
 
-        if self.has_file == True:
-            return Post.file.is_not(None)
+        if self.hasFullContent == False:
+            return [
+                Post.content_file.is_(None),
+                Post.preview_file.is_(None),
+            ]
 
         return None
 
