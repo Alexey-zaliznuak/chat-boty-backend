@@ -89,6 +89,8 @@ class PostsView:
         post: Post = Depends(validate_post_slug),
     ):
         if post.content_file is None or not os.path.exists(post.content_file):
+            print(f"{post.content_file=}")
+            print(f"file exists {os.path.exists(post.content_file)}")
             raise HTTPException(status_code=404, detail="File not found")
 
         return FileResponse(path=post.content_file, media_type=Config.POSTS_CONTENT_FILE_MEDIA_TYPE)
