@@ -44,26 +44,32 @@ class BaseORMService:
         Order by 'created_at'.
         """
 
-        query = select(
-            self.BASE_MODEL,
-            func.count(self.BASE_MODEL.id).over().label("total_items")
-        ).order_by(
-            self.BASE_MODEL.created_at.desc()
-        )
+        total_items = await self.get_rows_count(session, where)
 
-        query = self.apply_where_to_query(query, where)
-        query = pagination.apply_to_query(query)
+        if total_items == 0:
+            return PaginatedResponse(data=[], pagination=pagination, total_items=0)
+
+        query = select(self.BASE_MODEL).order_by(self.BASE_MODEL.created_at.desc())
+        query = query.limit(pagination.size).offset(pagination.offset)
 
         result = await session.execute(query)
-        rows = result.fetchall()
-
-        objects, total_objects = zip(*rows) if rows else ([], [0])
+        objects = result.scalars().all()
 
         return PaginatedResponse(
             data=objects,
             pagination=pagination,
-            total_items=total_objects[0]
+            total_items=total_items
         )
+
+    async def get_rows_count(
+        self,
+        session: AsyncSession,
+        where: ConvertibleToWhere | None = None,
+    ) -> int:
+        query = select(func.count(self.BASE_MODEL.id))
+        query = self.apply_where_to_query(query, where)
+
+        return await session.scalar(query)
 
     async def update_instance_fields(
         self,
@@ -96,9 +102,11 @@ class BaseORMService:
         await session.commit()
 
     def apply_where_to_query(self, query: T, where: ConvertibleToWhere | None) -> T:
-        where = self.__build_where(where)
+        if where:
+            where = self.__build_where(where)
+            return query.where(where)
 
-        return query.where(where)
+        return query
 
     def _parse_data(self, data: Data) -> dict:
         if isinstance(data, dict):
