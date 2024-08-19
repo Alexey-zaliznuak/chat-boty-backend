@@ -50,7 +50,8 @@ class BaseORMService:
             return PaginatedResponse(data=[], pagination=pagination, total_items=0)
 
         query = select(self.BASE_MODEL).order_by(self.BASE_MODEL.created_at.desc())
-        query = query.limit(pagination.size).offset(pagination.offset)
+        query = self.apply_where_to_query(query, where)
+        query = pagination.apply_to_query(query)
 
         result = await session.execute(query)
         objects = result.scalars().all()
