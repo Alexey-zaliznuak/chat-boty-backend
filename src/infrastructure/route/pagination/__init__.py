@@ -33,7 +33,7 @@ class PaginatedResponse(BaseModel, Generic[T]):
         super().__init__(
             data=data,
             page=pagination.page,
-            size=pagination.size,
+            size=min(len(data), pagination.size),
             total_items=total_items,
             total_pages=total_pages,
         )

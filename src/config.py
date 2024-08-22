@@ -2,7 +2,7 @@ from os import getenv as env
 from dotenv import load_dotenv
 
 
-load_dotenv()
+load_dotenv(override=True)
 
 
 class NotProvided: ...

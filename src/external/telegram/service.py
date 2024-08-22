@@ -4,7 +4,7 @@ from aiogram import Bot
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 
-from src.infrastructure.utils.singleton import SingletonMeta
+from src.utils import SingletonMeta
 
 from src.config import Config
 
