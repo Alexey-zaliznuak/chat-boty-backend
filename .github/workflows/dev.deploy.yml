@@ -48,5 +48,4 @@ jobs:
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           port: ${{ secrets.SERVER_PORT }}
           script: |
-            cd chat-boty-dev/
-            sshpass -p "${{ secrets.GIT_SSH_KEY_PASSPHRASE }}" git pull
+            ls
