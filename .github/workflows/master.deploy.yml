@@ -51,7 +51,7 @@ jobs:
           script: |
             eval "$(ssh-agent -s)"
             ssh-add <(echo "${{ secrets.GIT_SSH_PRIVATE_KEY }}") <<< ${{ secrets.GIT_SSH_PRIVATE_PASSPHRASE }}
-            cd chat-boty-dev/
+            cd chat-boty-prod/
             python3 start.py
 
   send_message:
@@ -65,3 +65,4 @@ jobs:
         token: ${{ secrets.TELEGRAM_SEND_MESSAGE_BOT_TOKEN }}
         message: |
           New version of ${{ github.event.repository.name }} was pushed successfully on production server.
+        debug: true
