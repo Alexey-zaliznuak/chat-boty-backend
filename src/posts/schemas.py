@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Optional
 from fastapi import Query
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field
 from datetime import datetime
 from uuid import UUID
 
@@ -9,6 +9,12 @@ from src.infrastructure.database.types import Where
 from src.infrastructure.database.filtering import BaseFilterModel
 
 from .models import Post
+
+
+class UniqueFieldsEnum(str, Enum):
+    id = "id"
+    slug = "slug"
+
 
 
 class BasicPost(BaseModel):
@@ -26,11 +32,6 @@ class BasicPost(BaseModel):
 
     class Config:
         from_attributes = True
-
-
-class UniqueFieldsEnum(str, Enum):
-    id = "id"
-    slug = "slug"
 
 
 class BasicEditablePost(BaseModel):
