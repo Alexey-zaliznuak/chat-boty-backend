@@ -42,4 +42,4 @@ app.include_router(v1_router)
 def ping():
     return {"message": "pong"}
 
-app.openapi_schema = build_custom_openapi_schema(app)
+# app.openapi_schema = build_custom_openapi_schema(app)

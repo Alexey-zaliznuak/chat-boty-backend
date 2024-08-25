@@ -3,6 +3,8 @@ from uuid import UUID
 
 from fastapi import Depends, HTTPException, Query, Request
 from pydantic import UUID4
+
+from src.utils import is_uuid
 from .schemas import PostFilterParams, UniqueFieldsEnum
 
 from src.database import get_async_session
@@ -12,12 +14,12 @@ from .service import PostsService as Service
 
 async def validate_post(
     identifier: str,
-    field: UniqueFieldsEnum | None = UniqueFieldsEnum.id,
+    field: UniqueFieldsEnum = Query(UniqueFieldsEnum.id),
     session=Depends(get_async_session)
 ) -> dict[str, Any]:
     field = UniqueFieldsEnum.id if field is None else field
 
-    if field == UniqueFieldsEnum.id and not isinstance(identifier, UUID4):
+    if field == UniqueFieldsEnum.id and not is_uuid(identifier):
         raise HTTPException(status_code=400, detail="Invalid UUID identifier.")
 
     return await Service().get_by_unique_field_or_404(identifier, field, session)
