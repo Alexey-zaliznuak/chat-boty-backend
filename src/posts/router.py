@@ -168,7 +168,7 @@ class PostsView:
         post: Post = Depends(validate_post),
     ):
         try:
-            await self.service.delete_by_id(post.id, post.file, self.session)
+            await self.service.delete_by_id(post.id, self.session)
 
         except FileNotFoundError:
             print("FILE NOT FOUND", post.file, flush=True)

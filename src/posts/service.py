@@ -37,13 +37,6 @@ class PostsService(BaseORMService, metaclass=SingletonMeta):
 
         return result[0] if result is not None else None
 
-    @override
-    async def delete_by_id(self, post_id: UUID, post_file: str, session: AsyncSession):
-        await super().delete_by_id(post_id, session)
-
-        if post_file:
-            await self._delete_file(post_file)
-
     # TODO remove
     async def get_by_slug(self, slug: str, session: AsyncSession, *, throw_not_found: bool = True):
         query = await session.execute(select(self.BASE_MODEL).where(self.BASE_MODEL.slug == slug))
@@ -77,5 +70,9 @@ class PostsService(BaseORMService, metaclass=SingletonMeta):
 
         return file_path
 
-    async def _delete_file(self, file: str):
-        os.remove(file)
+    def _delete_file(self, file: str):
+        try:
+            os.remove(file)
+        except FileNotFoundError:
+            pass
+
