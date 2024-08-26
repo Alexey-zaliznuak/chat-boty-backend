@@ -6,6 +6,7 @@ from fastapi import HTTPException, UploadFile, status
 from sqlalchemy import delete, func, select, and_, true
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.posts.schemas import UniqueFieldsEnum
 from src.utils import SingletonMeta
 from src.infrastructure.database import BaseORMService
 
@@ -19,13 +20,24 @@ class PostsService(BaseORMService, metaclass=SingletonMeta):
             base_model=Post
         )
 
-    @override
-    async def delete_by_id(self, post_id: UUID, post_file: str, session: AsyncSession):
-        await super().delete_by_id(post_id, session)
+    async def get_by_unique_field_or_404(self, identifier: str, field: UniqueFieldsEnum, session: AsyncSession) -> Post | None:
+        result = await self.get_by_unique_field(identifier, field, session)
 
-        if post_file:
-            await self._delete_file(post_file)
+        if result is None:
+            raise HTTPException(status.HTTP_404_NOT_FOUND, "Not found")
 
+        return result
+
+    async def get_by_unique_field(self, identifier: str, field: UniqueFieldsEnum, session: AsyncSession) -> Post | None:
+        unique_field = getattr(self.BASE_MODEL, field)
+
+        query = await session.execute(select(self.BASE_MODEL).where(unique_field == identifier))
+
+        result = query.fetchone()
+
+        return result[0] if result is not None else None
+
+    # TODO remove
     async def get_by_slug(self, slug: str, session: AsyncSession, *, throw_not_found: bool = True):
         query = await session.execute(select(self.BASE_MODEL).where(self.BASE_MODEL.slug == slug))
         result = query.fetchone()
@@ -58,5 +70,9 @@ class PostsService(BaseORMService, metaclass=SingletonMeta):
 
         return file_path
 
-    async def _delete_file(self, file: str):
-        os.remove(file)
+    def _delete_file(self, file: str):
+        try:
+            os.remove(file)
+        except FileNotFoundError:
+            pass
+
