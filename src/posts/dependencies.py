@@ -14,10 +14,10 @@ from .service import PostsService as Service
 
 async def validate_post(
     identifier: str,
-    field: UniqueFieldsEnum = Query(UniqueFieldsEnum.id),
+    field: UniqueFieldsEnum = Query(UniqueFieldsEnum.slug),
     session=Depends(get_async_session)
 ) -> dict[str, Any]:
-    field = UniqueFieldsEnum.id if field is None else field
+    field = UniqueFieldsEnum.slug if field is None else field
 
     if field == UniqueFieldsEnum.id and not is_uuid(identifier):
         raise HTTPException(status_code=400, detail="Invalid UUID identifier.")
