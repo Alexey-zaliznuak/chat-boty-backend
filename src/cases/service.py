@@ -5,6 +5,7 @@ from fastapi import HTTPException, UploadFile, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.infrastructure.file_management import FilesService, Path
 from src.cases.schemas import UniqueFieldsEnum
 from src.utils import SingletonMeta
 from src.infrastructure.database import BaseORMService
@@ -14,6 +15,8 @@ from .models import Case
 
 
 class CasesService(BaseORMService, metaclass=SingletonMeta):
+    files_service = FilesService()
+
     def __init__(self):
         super().__init__(
             base_model=Case
@@ -36,28 +39,14 @@ class CasesService(BaseORMService, metaclass=SingletonMeta):
 
         return result[0] if result is not None else None
 
-    async def save_content_file(self, case_id: UUID, file: UploadFile) -> str:
+    async def save_content_file(self, case_id: UUID, file: UploadFile) -> Path:
         directory_path = os.path.join(CasesConfig.UPLOAD_DIRECTORY, case_id.hex)
         file_path = os.path.join(directory_path, f"{CasesConfig.CASES_CONTENT_FILE_NAME}.{CasesConfig.CASES_CONTENT_FILE_EXTENSION}")
 
-        return await self._save_file(directory_path, file_path, file)
+        return await self.files_service.save_file(directory_path, file_path, file)
 
-    async def save_preview_file(self, case_id: UUID, file: UploadFile) -> str:
+    async def save_preview_file(self, case_id: UUID, file: UploadFile) -> Path:
         directory_path = os.path.join(CasesConfig.UPLOAD_DIRECTORY, case_id.hex)
         file_path = os.path.join(directory_path, f"{CasesConfig.CASES_PREVIEW_FILE_NAME}.{CasesConfig.CASES_PREVIEW_FILE_EXTENSION}")
 
-        return await self._save_file(directory_path, file_path, file)
-
-    async def _save_file(self, directory_path: str, file_path: str, file: UploadFile):
-        os.makedirs(directory_path, exist_ok=True)
-
-        with open(file_path, "wb") as buffer:
-            buffer.write(await file.read())
-
-        return file_path
-
-    def _delete_file(self, file: str):
-        try:
-            os.remove(file)
-        except FileNotFoundError:
-            pass
+        return await self.files_service.save_file(directory_path, file_path, file)
