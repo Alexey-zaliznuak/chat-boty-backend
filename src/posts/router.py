@@ -93,7 +93,7 @@ class PostsView:
         if post.preview_file is None or not os.path.exists(post.preview_file):
             raise HTTPException(status_code=404, detail="File not found")
 
-        return FileResponse(path=post.preview_file, media_type=Config.POSTS_CONTENT_FILE_MEDIA_TYPE)
+        return FileResponse(path=post.preview_file, media_type=Config.POSTS_PREVIEW_FILE_MEDIA_TYPE)
 
     @router.post("/", response_model=GetPostResponse)
     @admin_access()
