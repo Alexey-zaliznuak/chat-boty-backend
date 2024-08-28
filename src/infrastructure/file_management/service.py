@@ -27,7 +27,7 @@ class FilesService(metaclass=SingletonMeta):
             if not not_exists_ok:
                 raise e
 
-    async def __get_file_content(file: UploadFile | bytes) -> bytes:
+    async def __get_file_content(self, file: UploadFile | bytes) -> bytes:
         if isinstance(file, bytes):
             return file
 
