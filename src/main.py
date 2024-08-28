@@ -11,6 +11,7 @@ from src.infrastructure.openapi import build_custom_openapi_schema
 from src.infrastructure.rate_limit import limiter
 
 from src.posts.router import router as posts_router
+from src.cases.router import router as cases_router
 from src.communication_requests.router import router as communication_requests_router
 
 
@@ -32,6 +33,7 @@ app.add_middleware(
 v1_router = APIRouter(prefix="/api/v1")
 
 v1_router.include_router(posts_router)
+v1_router.include_router(cases_router)
 v1_router.include_router(communication_requests_router)
 
 
