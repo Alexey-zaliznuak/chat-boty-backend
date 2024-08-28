@@ -27,14 +27,9 @@ class FilesService(metaclass=SingletonMeta):
             if not not_exists_ok:
                 raise e
 
-    async def __get_file_content(self, file: UploadFile | bytes) -> bytes:
+    # TODO: refactor
+    async def __get_file_content(self, file) -> bytes:
         if isinstance(file, bytes):
             return file
 
-        if isinstance(file, UploadFile):
-            return await file.read()
-
-        raise ValueError(
-            f"Can not get file content from: {type(file)}, "
-            "file must be UploadFile or bytes"
-        )
+        return await file.read()
