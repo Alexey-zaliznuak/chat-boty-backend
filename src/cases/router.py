@@ -1,13 +1,10 @@
 import os
-from typing import Literal
-from uuid import UUID
 
 from fastapi import (
     APIRouter,
     Depends,
     File,
     HTTPException,
-    Query,
     Request,
     Response,
     UploadFile,
@@ -26,35 +23,34 @@ from src.infrastructure.route.pagination import (
 )
 from src.infrastructure.rate_limit import limiter
 
-from .config import PostsConfig as Config
-from .dependencies import validate_post, validate_post_id, get_post_filter_params, validate_post_slug
-from .models import Post
+from .config import CasesConfig as Config
+from .dependencies import get_cases_filter_params, validate_case
+from .models import Case
 from .schemas import (
-    BasicPost,
-    CreatePost,
-    GetPostResponse,
-    PostFilterParams,
+    CreateCase,
+    GetCaseResponse,
+    CaseFilterParams,
     UniqueFieldsEnum,
-    UpdatePost,
+    UpdateCase,
 )
-from .service import PostsService
+from .service import CasesService
 
 
-router = APIRouter(prefix="/posts", tags=["posts"])
+router = APIRouter(prefix="/cases", tags=["cases"])
 
 
 @cbv(router)
-class PostsView:
-    service = PostsService()
+class CasesView:
+    service = CasesService()
     session: AsyncSession = Depends(get_async_session)
 
-    @router.get("/", response_model=PaginatedResponse[GetPostResponse])
+    @router.get("/", response_model=PaginatedResponse[GetCaseResponse])
     @limiter.limit("10/minute")
     async def get_all(
         self,
         request: Request,
         pagination: PaginationParams = Depends(get_pagination_params),
-        filters: PostFilterParams = Depends(get_post_filter_params)
+        filters: CaseFilterParams = Depends(get_cases_filter_params)
     ):
         return await self.service.get_many_with_pagination(
             pagination,
@@ -62,116 +58,116 @@ class PostsView:
             where=filters,
         )
 
-    @router.get("/{identifier}/", response_model=GetPostResponse)
+    @router.get("/{identifier}/", response_model=GetCaseResponse)
     @limiter.limit("10/minute")
     async def get(
         self,
         request: Request,
-        post: Post = Depends(validate_post)
+        case: Case = Depends(validate_case)
     ):
-        return post
+        return case
 
     @router.get("/{identifier}/files/content")
     @limiter.limit("10/minute")
     async def get_content_file(
         self,
         request: Request,
-        post: Post = Depends(validate_post)
+        case: Case = Depends(validate_case)
     ):
-        if post.content_file is None or not os.path.exists(post.content_file):
+        if case.content_file is None or not os.path.exists(case.content_file):
             raise HTTPException(status_code=404, detail="File not found")
 
-        return FileResponse(path=post.content_file, media_type=Config.POSTS_CONTENT_FILE_MEDIA_TYPE)
+        return FileResponse(path=case.content_file, media_type=Config.CASES_CONTENT_FILE_MEDIA_TYPE)
 
     @router.get("/{identifier}/files/preview")
     @limiter.limit("10/minute")
     async def get_preview_file(
         self,
         request: Request,
-        post: Post = Depends(validate_post)
+        case: Case = Depends(validate_case)
     ):
-        if post.preview_file is None or not os.path.exists(post.preview_file):
+        if case.preview_file is None or not os.path.exists(case.preview_file):
             raise HTTPException(status_code=404, detail="File not found")
 
-        return FileResponse(path=post.preview_file, media_type=Config.POSTS_PREVIEW_FILE_MEDIA_TYPE)
+        return FileResponse(path=case.preview_file, media_type=Config.CASES_PREVIEW_FILE_MEDIA_TYPE)
 
-    @router.post("/", response_model=GetPostResponse)
+    @router.post("/", response_model=GetCaseResponse)
     @admin_access()
-    async def create(self, data: CreatePost, request: Request):
-        new_post = Post(
+    async def create(self, data: CreateCase, request: Request):
+        new_case = Case(
             title=data.title,
-            slug=await Post.generate_slug(data.title, self.session),
+            slug=await Case.generate_slug(data.title, self.session),
             short_description=data.short_description,
             reading_time=data.reading_time,
         )
 
-        await self.service.save_and_refresh(new_post, self.session)
+        await self.service.save_and_refresh(new_case, self.session)
 
-        if not new_post:
-            raise HTTPException(status.HTTP_409_CONFLICT, "Failed to create post")
+        if not new_case:
+            raise HTTPException(status.HTTP_409_CONFLICT, "Failed to create case")
 
-        return new_post
+        return new_case
 
-    @router.patch("/{identifier}", response_model=GetPostResponse)
+    @router.patch("/{identifier}", response_model=GetCaseResponse)
     @admin_access()
     async def update(
         self,
-        data: UpdatePost,
+        data: UpdateCase,
         request: Request,
-        post: Post = Depends(validate_post)
+        case: Case = Depends(validate_case)
     ):
         await self.service.update_instance_fields(
-            post,
+            case,
             data=data.model_dump(exclude_unset=True),
             session=self.session,
             save=True,
         )
-        return post
+        return case
 
-    @router.put("/{identifier}/files/content", response_model=GetPostResponse)
+    @router.put("/{identifier}/files/content", response_model=GetCaseResponse)
     @admin_access()
     async def upload_content_file(
         self,
         request: Request,
         file: UploadFile = File(...),
-        post: Post = Depends(validate_post)
+        case: Case = Depends(validate_case)
     ):
         await self.service.update_instance_fields(
-            post,
-            data={"content_file": await self.service.save_content_file(post.id, file)},
+            case,
+            data={"content_file": await self.service.save_content_file(case.id, file)},
             session=self.session,
             save=True,
         )
-        return post
+        return case
 
-    @router.put("/{identifier}/files/preview", response_model=GetPostResponse)
+    @router.put("/{identifier}/files/preview", response_model=GetCaseResponse)
     @admin_access()
     async def upload_preview_file(
         self,
         request: Request,
         file: UploadFile = File(...),
-        post: Post = Depends(validate_post)
+        case: Case = Depends(validate_case)
     ):
         await self.service.update_instance_fields(
-            post,
-            data={"preview_file": await self.service.save_preview_file(post.id, file)},
+            case,
+            data={"preview_file": await self.service.save_preview_file(case.id, file)},
             session=self.session,
             save=True,
         )
-        return post
+        return case
 
     @router.delete("/{identifier}", response_model=None)
     @admin_access()
     async def delete(
         self,
         request: Request,
-        post: Post = Depends(validate_post),
+        case: Case = Depends(validate_case),
     ):
         try:
-            await self.service.delete_by_id(post.id, self.session)
+            await self.service.delete_by_id(case.id, self.session)
 
         except FileNotFoundError:
-            print("FILE NOT FOUND", post.file, flush=True)
+            print("FILE NOT FOUND", case.file, flush=True)
             raise
 
         return Response(status_code=status.HTTP_204_NO_CONTENT)

@@ -37,19 +37,6 @@ class PostsService(BaseORMService, metaclass=SingletonMeta):
 
         return result[0] if result is not None else None
 
-    # TODO remove
-    async def get_by_slug(self, slug: str, session: AsyncSession, *, throw_not_found: bool = True):
-        query = await session.execute(select(self.BASE_MODEL).where(self.BASE_MODEL.slug == slug))
-        result = query.fetchone()
-
-        if result is None:
-            if throw_not_found:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not found")
-            return None
-
-        obj = result[0]
-        return obj
-
     async def save_content_file(self, post_id: UUID, file: UploadFile) -> str:
         directory_path = os.path.join(PostsConfig.UPLOAD_DIRECTORY, post_id.hex)
         file_path = os.path.join(directory_path, f"{PostsConfig.POSTS_CONTENT_FILE_NAME}.{PostsConfig.POSTS_CONTENT_FILE_EXTENSION}")
@@ -69,10 +56,3 @@ class PostsService(BaseORMService, metaclass=SingletonMeta):
             buffer.write(await file.read())
 
         return file_path
-
-    def _delete_file(self, file: str):
-        try:
-            os.remove(file)
-        except FileNotFoundError:
-            pass
-

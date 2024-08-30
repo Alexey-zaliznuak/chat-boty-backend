@@ -7,6 +7,7 @@ from alembic import context
 
 from src.config import Config
 from src.posts.models import Base as PostsBase
+from src.cases.models import Base as CasesBase
 
 
 config = context.config
@@ -18,7 +19,7 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 
-target_metadata = [PostsBase.metadata]
+target_metadata = [PostsBase.metadata, CasesBase.metadata]
 
 
 def run_migrations_offline() -> None:
