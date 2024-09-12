@@ -1,16 +1,11 @@
-import os
-
 from fastapi import (
     APIRouter,
     Depends,
-    File,
     HTTPException,
     Request,
     Response,
-    UploadFile,
     status
 )
-from fastapi.responses import FileResponse
 from fastapi_restful.cbv import cbv
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -26,10 +21,10 @@ from src.infrastructure.rate_limit import limiter
 from .config import CasesConfig as Config
 from .dependencies import get_cases_filter_params, validate_case
 from .models import Case
+from .filters import CaseFilterParams
 from .schemas import (
     CreateCase,
     GetCaseResponse,
-    CaseFilterParams,
     UniqueFieldsEnum,
     UpdateCase,
 )
@@ -67,29 +62,14 @@ class CasesView:
     ):
         return case
 
-    @router.get("/{identifier}/files/content")
+    @router.get("/{identifier}/content")
     @limiter.limit("10/minute")
     async def get_content_file(
         self,
         request: Request,
         case: Case = Depends(validate_case)
-    ):
-        if case.content_file is None or not os.path.exists(case.content_file):
-            raise HTTPException(status_code=404, detail="File not found")
-
-        return FileResponse(path=case.content_file, media_type=Config.CASES_CONTENT_FILE_MEDIA_TYPE)
-
-    @router.get("/{identifier}/files/preview")
-    @limiter.limit("10/minute")
-    async def get_preview_file(
-        self,
-        request: Request,
-        case: Case = Depends(validate_case)
-    ):
-        if case.preview_file is None or not os.path.exists(case.preview_file):
-            raise HTTPException(status_code=404, detail="File not found")
-
-        return FileResponse(path=case.preview_file, media_type=Config.CASES_PREVIEW_FILE_MEDIA_TYPE)
+    ) -> str:
+        return case.content
 
     @router.post("/", response_model=GetCaseResponse)
     @admin_access()
@@ -119,38 +99,6 @@ class CasesView:
         await self.service.update_instance_fields(
             case,
             data=data.model_dump(exclude_unset=True),
-            session=self.session,
-            save=True,
-        )
-        return case
-
-    @router.put("/{identifier}/files/content", response_model=GetCaseResponse)
-    @admin_access()
-    async def upload_content_file(
-        self,
-        request: Request,
-        file: UploadFile = File(...),
-        case: Case = Depends(validate_case)
-    ):
-        await self.service.update_instance_fields(
-            case,
-            data={"content_file": await self.service.save_content_file(case.id, file)},
-            session=self.session,
-            save=True,
-        )
-        return case
-
-    @router.put("/{identifier}/files/preview", response_model=GetCaseResponse)
-    @admin_access()
-    async def upload_preview_file(
-        self,
-        request: Request,
-        file: UploadFile = File(...),
-        case: Case = Depends(validate_case)
-    ):
-        await self.service.update_instance_fields(
-            case,
-            data={"preview_file": await self.service.save_preview_file(case.id, file)},
             session=self.session,
             save=True,
         )

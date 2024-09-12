@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from sqlalchemy import CheckConstraint, Column, DateTime, Integer, String, event, select
+from sqlalchemy import CheckConstraint, Column, DateTime, Integer, String, Text, event, select
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -22,8 +22,7 @@ class Post(Base):
     short_description = Column(String(300), nullable=False)
     reading_time = Column(Integer, CheckConstraint('reading_time > 0 AND reading_time <= 120'), nullable=False)
 
-    content_file = Column(String, nullable=True)
-    preview_file = Column(String, nullable=True)
+    content = Column(Text, nullable=True)
 
     @staticmethod
     async def generate_slug(title: str, session: AsyncSession):

@@ -27,8 +27,7 @@ class BasicPost(BaseModel):
     short_description: str = Field(max_length=300)
     reading_time: int = Field(gt=0, le=120)
 
-    content_file: str
-    preview_file: str
+    content: str
 
     class Config:
         from_attributes = True
@@ -38,6 +37,8 @@ class BasicEditablePost(BaseModel):
     title: str = Field(max_length=100)
     short_description: str = Field(max_length=300)
     reading_time: int = Field(gt=0, le=120)
+
+    content: str
 
     class Config:
         from_attributes = True
@@ -57,30 +58,6 @@ class GetPostResponse(BaseModel):
         from_attributes = True
 
 
-class PostFilterParams(BaseModel, BaseFilterModel):
-    hasFullContent : Optional[bool] = Query(None)
-
-    def to_where_statement(self) -> Where:
-        return [
-            self.to_where_has_file(),
-        ]
-
-    def to_where_has_file(self) -> Where:
-        if self.hasFullContent == True:
-            return [
-                Post.content_file.is_not(None),
-                Post.preview_file.is_not(None),
-            ]
-
-        if self.hasFullContent == False:
-            return [
-                Post.content_file.is_(None),
-                Post.preview_file.is_(None),
-            ]
-
-        return None
-
-
 class CreatePost(BasicEditablePost):
     pass
 
@@ -90,3 +67,5 @@ class UpdatePost(BaseModel):
     slug: Optional[str] = Field(None, max_length=150)
     short_description: Optional[str] = Field(None, max_length=300)
     reading_time: Optional[int] = Field(None, gt=0, le=120)
+
+    content: str

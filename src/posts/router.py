@@ -1,6 +1,4 @@
 import os
-from typing import Literal
-from uuid import UUID
 
 from fastapi import (
     APIRouter,
@@ -27,13 +25,13 @@ from src.infrastructure.route.pagination import (
 from src.infrastructure.rate_limit import limiter
 
 from .config import PostsConfig as Config
-from .dependencies import validate_post, validate_post_id, get_post_filter_params, validate_post_slug
+from .dependencies import validate_post, get_post_filter_params
 from .models import Post
+from .filters import PostFilterParams
 from .schemas import (
     BasicPost,
     CreatePost,
     GetPostResponse,
-    PostFilterParams,
     UniqueFieldsEnum,
     UpdatePost,
 )
@@ -71,29 +69,14 @@ class PostsView:
     ):
         return post
 
-    @router.get("/{identifier}/files/content")
+    @router.get("/{identifier}/content")
     @limiter.limit("10/minute")
-    async def get_content_file(
+    async def get_content(
         self,
         request: Request,
         post: Post = Depends(validate_post)
-    ):
-        if post.content_file is None or not os.path.exists(post.content_file):
-            raise HTTPException(status_code=404, detail="File not found")
-
-        return FileResponse(path=post.content_file, media_type=Config.POSTS_CONTENT_FILE_MEDIA_TYPE)
-
-    @router.get("/{identifier}/files/preview")
-    @limiter.limit("10/minute")
-    async def get_preview_file(
-        self,
-        request: Request,
-        post: Post = Depends(validate_post)
-    ):
-        if post.preview_file is None or not os.path.exists(post.preview_file):
-            raise HTTPException(status_code=404, detail="File not found")
-
-        return FileResponse(path=post.preview_file, media_type=Config.POSTS_PREVIEW_FILE_MEDIA_TYPE)
+    ) -> str:
+        return post.content
 
     @router.post("/", response_model=GetPostResponse)
     @admin_access()
@@ -123,38 +106,6 @@ class PostsView:
         await self.service.update_instance_fields(
             post,
             data=data.model_dump(exclude_unset=True),
-            session=self.session,
-            save=True,
-        )
-        return post
-
-    @router.put("/{identifier}/files/content", response_model=GetPostResponse)
-    @admin_access()
-    async def upload_content_file(
-        self,
-        request: Request,
-        file: UploadFile = File(...),
-        post: Post = Depends(validate_post)
-    ):
-        await self.service.update_instance_fields(
-            post,
-            data={"content_file": await self.service.save_content_file(post.id, file)},
-            session=self.session,
-            save=True,
-        )
-        return post
-
-    @router.put("/{identifier}/files/preview", response_model=GetPostResponse)
-    @admin_access()
-    async def upload_preview_file(
-        self,
-        request: Request,
-        file: UploadFile = File(...),
-        post: Post = Depends(validate_post)
-    ):
-        await self.service.update_instance_fields(
-            post,
-            data={"preview_file": await self.service.save_preview_file(post.id, file)},
             session=self.session,
             save=True,
         )
