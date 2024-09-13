@@ -10,7 +10,6 @@ class UniqueFieldsEnum(str, Enum):
     slug = "slug"
 
 
-
 class BasicCase(BaseModel):
     id: UUID
     created_at: datetime
@@ -22,6 +21,8 @@ class BasicCase(BaseModel):
     reading_time: int = Field(gt=0, le=120)
 
     content: str = Field(max_length=300)
+    preview_file_id: str = Field(max_length=100)
+    preview_og_file_id: str = Field(max_length=100)
 
     class Config:
         from_attributes = True
@@ -31,6 +32,10 @@ class BasicEditableCase(BaseModel):
     title: str = Field(max_length=100)
     short_description: str = Field(max_length=300)
     reading_time: int = Field(gt=0, le=120)
+
+    content: str
+    preview_file_id: str = Field(max_length=100)
+    preview_og_file_id: str = Field(max_length=100)
 
     class Config:
         from_attributes = True
@@ -46,6 +51,9 @@ class GetCaseResponse(BaseModel):
     short_description: str = Field(max_length=300)
     reading_time: int = Field(gt=0, le=120)
 
+    preview_file_id: str = Field(max_length=100)
+    preview_og_file_id: str = Field(max_length=100)
+
     class Config:
         from_attributes = True
 
@@ -60,3 +68,6 @@ class UpdateCase(BaseModel):
     short_description: Optional[str] = Field(None, max_length=300)
     reading_time: Optional[int] = Field(None, gt=0, le=120)
     content: Optional[str] = Field(None)
+
+    preview_file_id: str = Field(max_length=100)
+    preview_og_file_id: str = Field(max_length=100)

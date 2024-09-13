@@ -8,19 +8,19 @@ from .models import Post
 
 
 class PostFilterParams(BaseModel, BaseFilterModel):
-    has_content: Optional[bool] = Query(None)
+    has_full_content: Optional[bool] = Query(None)
 
     def to_where_statement(self) -> Where:
         return [
-            self.to_where_has_content(),
-            # self.to_where_search(),
+            self.to_where_has_full_content(),
+            self.to_where_preview_file_id(),
         ]
 
-    def to_where_has_content(self) -> Where:
-        if self.has_content == True:
+    def to_where_has_full_content(self) -> Where:
+        if self.has_full_content == True:
             return Post.content.is_not(None)
 
-        if self.has_content == False:
+        if self.has_full_content == False:
             return Post.content.is_(None)
 
     # def to_where_search(self) -> Where:

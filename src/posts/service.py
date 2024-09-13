@@ -1,16 +1,11 @@
-import os
-from typing import override
-from uuid import UUID
-
-from fastapi import HTTPException, UploadFile, status
-from sqlalchemy import delete, func, select, and_, true
+from fastapi import HTTPException, status
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.posts.schemas import UniqueFieldsEnum
 from src.utils import SingletonMeta
 from src.infrastructure.database import BaseORMService
 
-from .config import PostsConfig
 from .models import Post
 
 

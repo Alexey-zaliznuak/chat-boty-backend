@@ -23,6 +23,8 @@ class Post(Base):
     reading_time = Column(Integer, CheckConstraint('reading_time > 0 AND reading_time <= 120'), nullable=False)
 
     content = Column(Text, nullable=True)
+    preview_file_id = Column(String(100), nullable=True)
+    preview_og_file_id = Column(String(100), nullable=True)
 
     @staticmethod
     async def generate_slug(title: str, session: AsyncSession):

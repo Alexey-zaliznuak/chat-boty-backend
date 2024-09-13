@@ -28,6 +28,8 @@ class BasicPost(BaseModel):
     reading_time: int = Field(gt=0, le=120)
 
     content: str
+    preview_file_id: str = Field(max_length=100)
+    preview_og_file_id: str = Field(max_length=100)
 
     class Config:
         from_attributes = True
@@ -39,6 +41,8 @@ class BasicEditablePost(BaseModel):
     reading_time: int = Field(gt=0, le=120)
 
     content: str
+    preview_file_id: str = Field(max_length=100)
+    preview_og_file_id: str = Field(max_length=100)
 
     class Config:
         from_attributes = True
@@ -53,6 +57,9 @@ class GetPostResponse(BaseModel):
     slug: str = Field(max_length=150)
     short_description: str = Field(max_length=300)
     reading_time: int = Field(gt=0, le=120)
+
+    preview_file_id: str = Field(max_length=100)
+    preview_og_file_id: str = Field(max_length=100)
 
     class Config:
         from_attributes = True
@@ -69,3 +76,6 @@ class UpdatePost(BaseModel):
     reading_time: Optional[int] = Field(None, gt=0, le=120)
 
     content: str
+
+    preview_file_id: Optional[str] = Field(None, max_length=100)
+    preview_og_file_id: Optional[str] = Field(None, max_length=100)

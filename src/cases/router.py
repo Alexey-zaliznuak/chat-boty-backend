@@ -25,7 +25,6 @@ from .filters import CaseFilterParams
 from .schemas import (
     CreateCase,
     GetCaseResponse,
-    UniqueFieldsEnum,
     UpdateCase,
 )
 from .service import CasesService
@@ -74,12 +73,9 @@ class CasesView:
     @router.post("/", response_model=GetCaseResponse)
     @admin_access()
     async def create(self, data: CreateCase, request: Request):
-        new_case = Case(
-            title=data.title,
-            slug=await Case.generate_slug(data.title, self.session),
-            short_description=data.short_description,
-            reading_time=data.reading_time,
-        )
+        slug = await Case.generate_slug(data.title, self.session)
+
+        new_case = Case(**data.model_dump(), slug=slug)
 
         await self.service.save_and_refresh(new_case, self.session)
 
@@ -111,11 +107,6 @@ class CasesView:
         request: Request,
         case: Case = Depends(validate_case),
     ):
-        try:
-            await self.service.delete_by_id(case.id, self.session)
-
-        except FileNotFoundError:
-            print("FILE NOT FOUND", case.file, flush=True)
-            raise
+        await self.service.delete_by_id(case.id, self.session)
 
         return Response(status_code=status.HTTP_204_NO_CONTENT)
