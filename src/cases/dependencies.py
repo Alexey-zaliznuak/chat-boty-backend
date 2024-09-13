@@ -3,7 +3,8 @@ from typing import Any
 from fastapi import Depends, HTTPException, Query
 
 from src.utils import is_uuid
-from .schemas import CaseFilterParams, UniqueFieldsEnum
+from .schemas import UniqueFieldsEnum
+from .filters import CaseFilterParams
 
 from src.database import get_async_session
 
