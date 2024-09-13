@@ -5,7 +5,8 @@ from fastapi import Depends, HTTPException, Query, Request
 from pydantic import UUID4
 
 from src.utils import is_uuid
-from .schemas import PostFilterParams, UniqueFieldsEnum
+from .schemas import UniqueFieldsEnum
+from .filters import PostFilterParams
 
 from src.database import get_async_session
 
