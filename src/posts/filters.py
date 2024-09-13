@@ -13,15 +13,17 @@ class PostFilterParams(BaseModel, BaseFilterModel):
     def to_where_statement(self) -> Where:
         return [
             self.to_where_has_full_content(),
-            self.to_where_preview_file_id(),
         ]
 
     def to_where_has_full_content(self) -> Where:
         if self.has_full_content == True:
-            return Post.content.is_not(None)
+            return [
+                Post.content.is_not(None),
+                Post.preview_file_id.is_not(None)
+            ]
 
         if self.has_full_content == False:
-            return Post.content.is_(None)
+            return [Post.content.is_(None), Post.preview_file_id.is_(None)]
 
     # def to_where_search(self) -> Where:
     #     if self.search:
