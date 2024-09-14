@@ -27,6 +27,8 @@ class BasicPost(BaseModel):
     short_description: str = Field(max_length=300)
     reading_time: int = Field(gt=0, le=120)
 
+    is_published: bool = Field(False)
+
     content: str
     preview_file_id: str = Field(max_length=100)
     preview_og_file_id: str = Field(max_length=100)
@@ -40,7 +42,10 @@ class BasicEditablePost(BaseModel):
     short_description: str = Field(max_length=300)
     reading_time: int = Field(gt=0, le=120)
 
+    is_published: bool = Field(False)
+
     content: str = Field(max_length=30_000)
+
     preview_file_id: str = Field(max_length=100)
     preview_og_file_id: str = Field(max_length=100)
 
@@ -52,6 +57,8 @@ class GetPostResponse(BaseModel):
     id: UUID
     created_at: datetime
     updated_at: datetime
+
+    is_published: bool = Field(False)
 
     title: str = Field(max_length=100)
     slug: str = Field(max_length=150)
@@ -74,6 +81,8 @@ class UpdatePost(BaseModel):
     slug: Optional[str] = Field(None, max_length=150)
     short_description: Optional[str] = Field(None, max_length=300)
     reading_time: Optional[int] = Field(None, gt=0, le=120)
+
+    is_published: Optional[bool] = Field(None)
 
     content: Optional[str] = Field(None, max_length=30_000)
 
