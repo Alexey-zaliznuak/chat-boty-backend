@@ -19,15 +19,17 @@ class PostFilterParams(BaseModel, BaseFilterModel):
         if self.has_full_content == True:
             return [
                 Post.content.is_not(None),
-                Post.preview_file_id.is_not(None)
+                Post.content != "",
+
+                Post.preview_file_id.is_not(None),
+                Post.preview_file_id != "",
             ]
 
         if self.has_full_content == False:
-            return [Post.content.is_(None), Post.preview_file_id.is_(None)]
+            return or_(
+                Post.content.is_(None),
+                Post.content == "",
 
-    # def to_where_search(self) -> Where:
-    #     if self.search:
-    #         return or_(
-    #             Post.title.ilike(self.search),
-    #             Post.content.ilike(self.search)
-    #         )
+                Post.preview_file_id.is_(None),
+                Post.preview_file_id == "",
+            )

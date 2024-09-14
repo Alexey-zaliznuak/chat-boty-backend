@@ -24,4 +24,4 @@ async def validate_case(
     return await Service().get_by_unique_field_or_404(identifier, field, session)
 
 def get_cases_filter_params(hasFullContent: bool | None = Query(None)) -> CaseFilterParams:
-    return CaseFilterParams(hasFullContent=hasFullContent)
+    return CaseFilterParams(has_full_content=hasFullContent)

@@ -51,8 +51,8 @@ class GetCaseResponse(BaseModel):
     short_description: str = Field(max_length=300)
     reading_time: int = Field(gt=0, le=120)
 
-    preview_file_id: str = Field(max_length=100)
-    preview_og_file_id: str = Field(max_length=100)
+    preview_file_id: Optional[str] = Field(max_length=100)
+    preview_og_file_id: Optional[str] = Field(max_length=100)
 
     class Config:
         from_attributes = True

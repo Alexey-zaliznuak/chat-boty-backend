@@ -32,4 +32,4 @@ async def validate_post_id(post_id: UUID, session=Depends(get_async_session)) ->
     return await Service().get_by_id(post_id, session)
 
 def get_post_filter_params(hasFullContent: bool | None = Query(None)) -> PostFilterParams:
-    return PostFilterParams(hasFullContent=hasFullContent)
+    return PostFilterParams(has_full_content=hasFullContent)

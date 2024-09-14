@@ -19,8 +19,17 @@ class CaseFilterParams(BaseModel, BaseFilterModel):
         if self.has_full_content == True:
             return [
                 Case.content.is_not(None),
-                Case.preview_file_id.is_not(None)
+                Case.content != "",
+
+                Case.preview_file_id.is_not(None),
+                Case.preview_file_id != "",
             ]
 
         if self.has_full_content == False:
-            return [Case.content.is_(None), Case.preview_file_id.is_(None)]
+            return or_(
+                Case.content.is_(None),
+                Case.content == "",
+
+                Case.preview_file_id.is_(None),
+                Case.preview_file_id == "",
+            )
