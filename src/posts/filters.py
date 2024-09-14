@@ -19,17 +19,11 @@ class PostFilterParams(BaseModel, BaseFilterModel):
         if self.has_full_content == True:
             return [
                 Post.content.is_not(None),
-                Post.content != "",
-
                 Post.preview_file_id.is_not(None),
-                Post.preview_file_id != "",
             ]
 
         if self.has_full_content == False:
             return or_(
                 Post.content.is_(None),
-                Post.content == "",
-
                 Post.preview_file_id.is_(None),
-                Post.preview_file_id == "",
             )

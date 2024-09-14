@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from sqlalchemy import CheckConstraint, Column, DateTime, Integer, String, Text, event, select
+from sqlalchemy import Boolean, CheckConstraint, Column, DateTime, Integer, String, Text, event, select
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -24,8 +24,8 @@ class Case(Base):
     reading_time = Column(Integer, CheckConstraint('reading_time > 0 AND reading_time <= 120'), nullable=False)
 
     content = Column(Text, nullable=True)
-    preview_file_id = Column(String(100), nullable=True)
-    preview_og_file_id = Column(String(100), nullable=True)
+    preview_file_id = Column(UUID(as_uuid=True), nullable=True)
+    preview_og_file_id = Column(UUID(as_uuid=True), nullable=True)
 
     @staticmethod
     async def generate_slug(title: str, session: AsyncSession):
