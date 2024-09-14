@@ -47,6 +47,20 @@ def upgrade() -> None:
         AND NOT preview_og_file_id ~* '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$';
     """)
 
+    # Удаляем значение по умолчанию перед изменением типа столбца
+    op.execute("""
+        ALTER TABLE cases ALTER COLUMN preview_file_id DROP DEFAULT;
+    """)
+    op.execute("""
+        ALTER TABLE cases ALTER COLUMN preview_og_file_id DROP DEFAULT;
+    """)
+    op.execute("""
+        ALTER TABLE posts ALTER COLUMN preview_file_id DROP DEFAULT;
+    """)
+    op.execute("""
+        ALTER TABLE posts ALTER COLUMN preview_og_file_id DROP DEFAULT;
+    """)
+
     # Явное указание на преобразование в UUID с использованием выражения USING
     op.execute("""
         ALTER TABLE cases
