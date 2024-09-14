@@ -30,8 +30,8 @@ class BasicPost(BaseModel):
     is_published: bool = Field(False)
 
     content: str
-    preview_file_id: str = Field(max_length=100)
-    preview_og_file_id: str = Field(max_length=100)
+    preview_file_id: UUID = Field(max_length=100)
+    preview_og_file_id: UUID = Field(max_length=100)
 
     class Config:
         from_attributes = True
@@ -46,8 +46,8 @@ class BasicEditablePost(BaseModel):
 
     content: str = Field(max_length=30_000)
 
-    preview_file_id: str = Field(max_length=100)
-    preview_og_file_id: str = Field(max_length=100)
+    preview_file_id: UUID = Field(max_length=100)
+    preview_og_file_id: UUID = Field(max_length=100)
 
     class Config:
         from_attributes = True
@@ -65,8 +65,8 @@ class GetPostResponse(BaseModel):
     short_description: str = Field(max_length=300)
     reading_time: int = Field(gt=0, le=120)
 
-    preview_file_id: Optional[str] = Field(max_length=100)
-    preview_og_file_id: Optional[str] = Field(max_length=100)
+    preview_file_id: Optional[UUID] = Field(max_length=100)
+    preview_og_file_id: Optional[UUID] = Field(max_length=100)
 
     class Config:
         from_attributes = True
@@ -86,5 +86,5 @@ class UpdatePost(BaseModel):
 
     content: Optional[str] = Field(None, max_length=30_000)
 
-    preview_file_id: Optional[str] = Field(None, max_length=100)
-    preview_og_file_id: Optional[str] = Field(None, max_length=100)
+    preview_file_id: Optional[UUID] = Field(None, max_length=100)
+    preview_og_file_id: Optional[UUID] = Field(None, max_length=100)
