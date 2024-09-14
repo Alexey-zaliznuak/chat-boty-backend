@@ -19,6 +19,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
+    # Очистка невалидных UUID в таблице `posts`
     op.execute("""
         UPDATE posts
         SET preview_file_id = NULL
@@ -31,6 +32,8 @@ def upgrade() -> None:
         WHERE preview_og_file_id IS NOT NULL
         AND NOT preview_og_file_id ~* '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$';
     """)
+
+    # Очистка невалидных UUID в таблице `cases`
     op.execute("""
         UPDATE cases
         SET preview_file_id = NULL
@@ -43,26 +46,43 @@ def upgrade() -> None:
         WHERE preview_og_file_id IS NOT NULL
         AND NOT preview_og_file_id ~* '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$';
     """)
+
     # Явное указание на преобразование в UUID с использованием выражения USING
     op.execute("""
         ALTER TABLE cases
         ALTER COLUMN preview_file_id TYPE UUID
-        USING preview_file_id::uuid;
+        USING CASE
+            WHEN preview_file_id ~* '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+            THEN preview_file_id::uuid
+            ELSE NULL
+        END;
     """)
     op.execute("""
         ALTER TABLE cases
         ALTER COLUMN preview_og_file_id TYPE UUID
-        USING preview_og_file_id::uuid;
+        USING CASE
+            WHEN preview_og_file_id ~* '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+            THEN preview_og_file_id::uuid
+            ELSE NULL
+        END;
     """)
     op.execute("""
         ALTER TABLE posts
         ALTER COLUMN preview_file_id TYPE UUID
-        USING preview_file_id::uuid;
+        USING CASE
+            WHEN preview_file_id ~* '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+            THEN preview_file_id::uuid
+            ELSE NULL
+        END;
     """)
     op.execute("""
         ALTER TABLE posts
         ALTER COLUMN preview_og_file_id TYPE UUID
-        USING preview_og_file_id::uuid;
+        USING CASE
+            WHEN preview_og_file_id ~* '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+            THEN preview_og_file_id::uuid
+            ELSE NULL
+        END;
     """)
 
 
