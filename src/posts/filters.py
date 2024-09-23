@@ -9,23 +9,34 @@ from .models import Post
 
 class PostFilterParams(BaseModel, BaseFilterModel):
     has_full_content: Optional[bool] = Query(None)
+    is_published: Optional[bool] = Query(None)
 
     def to_where_statement(self) -> Where:
         return [
             self.to_where_has_full_content(),
-            self.to_where_preview_file_id(),
+            self.to_where_is_published(),
         ]
 
     def to_where_has_full_content(self) -> Where:
         if self.has_full_content == True:
-            return Post.content.is_not(None)
+            return [
+                Post.content.is_not(None),
+                Post.preview_file_id.is_not(None),
+            ]
 
         if self.has_full_content == False:
-            return Post.content.is_(None)
+            return or_(
+                Post.content.is_(None),
+                Post.preview_file_id.is_(None),
+            )
 
-    # def to_where_search(self) -> Where:
-    #     if self.search:
-    #         return or_(
-    #             Post.title.ilike(self.search),
-    #             Post.content.ilike(self.search)
-    #         )
+    def to_where_is_published(self) -> Where:
+        if self.is_published == True:
+            return [
+                Post.is_published == True,
+            ]
+
+        if self.has_full_content == False:
+            return or_(
+                Post.is_published == False,
+            )

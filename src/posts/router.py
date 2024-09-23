@@ -69,7 +69,7 @@ class PostsView:
         self,
         request: Request,
         post: Post = Depends(validate_post)
-    ) -> str:
+    ) -> str | None:
         return post.content
 
     @router.post("/")

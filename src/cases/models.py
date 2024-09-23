@@ -1,6 +1,6 @@
 import uuid
-from datetime import datetime
-from sqlalchemy import CheckConstraint, Column, DateTime, Integer, String, Text, event, select
+from datetime import datetime, timezone
+from sqlalchemy import Boolean, CheckConstraint, Column, DateTime, Integer, String, Text, event, select
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -14,8 +14,10 @@ class Case(Base):
     __tablename__ = 'cases'
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=datetime.now(timezone.utc), nullable=False)
+    updated_at = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc), nullable=False)
+
+    is_published = Column(Boolean, default=False, nullable=False)
 
     title = Column(String(100), nullable=False)
     slug = Column(String(150), unique=True, index=True, nullable=False)
@@ -24,8 +26,8 @@ class Case(Base):
     reading_time = Column(Integer, CheckConstraint('reading_time > 0 AND reading_time <= 120'), nullable=False)
 
     content = Column(Text, nullable=True)
-    preview_file_id = Column(String(100), nullable=True)
-    preview_og_file_id = Column(String(100), nullable=True)
+    preview_file_id = Column(UUID(as_uuid=True), nullable=True)
+    preview_og_file_id = Column(UUID(as_uuid=True), nullable=True)
 
     @staticmethod
     async def generate_slug(title: str, session: AsyncSession):

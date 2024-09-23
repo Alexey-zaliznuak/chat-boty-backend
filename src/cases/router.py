@@ -67,7 +67,7 @@ class CasesView:
         self,
         request: Request,
         case: Case = Depends(validate_case)
-    ) -> str:
+    ) -> str | None:
         return case.content
 
     @router.post("/", response_model=GetCaseResponse)
