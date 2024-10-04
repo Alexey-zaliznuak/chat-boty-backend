@@ -34,8 +34,8 @@ class BasicEditableCase(BaseModel):
     reading_time: int = Field(gt=0, le=120)
 
     content: str
-    preview_file_id: UUID = Field()
-    preview_og_file_id: UUID = Field()
+    preview_file_id: Optional[UUID] = Field(None)
+    preview_og_file_id: Optional[UUID] = Field(None)
 
     class Config:
         from_attributes = True
