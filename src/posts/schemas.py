@@ -39,8 +39,8 @@ class BasicEditablePost(BaseModel):
 
     content: str = Field(max_length=30_000)
 
-    preview_file_id: UUID = Field()
-    preview_og_file_id: UUID = Field()
+    preview_file_id: Optional[UUID] = Field(None)
+    preview_og_file_id: Optional[UUID] = Field(None)
 
     class Config:
         from_attributes = True
