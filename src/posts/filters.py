@@ -36,7 +36,7 @@ class PostFilterParams(BaseModel, BaseFilterModel):
                 Post.is_published == True,
             ]
 
-        if self.has_full_content == False:
+        if self.is_published == False:
             return or_(
                 Post.is_published == False,
             )

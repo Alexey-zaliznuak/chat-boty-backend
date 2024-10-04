@@ -35,7 +35,7 @@ class CaseFilterParams(BaseModel, BaseFilterModel):
                 Case.is_published == True,
             ]
 
-        if self.has_full_content == False:
+        if self.is_published == False:
             return [
                 Case.is_published == False,
             ]
