@@ -14,6 +14,7 @@ class CaseFilterParams(BaseModel, BaseFilterModel):
     def to_where_statement(self) -> Where:
         return [
             self.to_where_has_content(),
+            self.to_where_is_published(),
         ]
 
     def to_where_has_content(self) -> Where:
@@ -35,7 +36,8 @@ class CaseFilterParams(BaseModel, BaseFilterModel):
                 Case.is_published == True,
             ]
 
-        if self.has_full_content == False:
-            return or_(
+        if self.is_published == False:
+            return [
                 Case.is_published == False,
-            )
+            ]
+
