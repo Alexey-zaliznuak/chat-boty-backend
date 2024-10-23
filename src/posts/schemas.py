@@ -15,30 +15,21 @@ class BasicPost(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-    title: str = Field(max_length=100)
     slug: str = Field(max_length=150)
+
     short_description: str = Field(max_length=300)
+    web_description: str = Field(max_length=300)
+    og_description: str = Field(max_length=300)
+
+    title: str = Field(max_length=100)
+    web_title: str = Field(max_length=100)
+    og_title: str = Field(max_length=100)
+
     reading_time: int = Field(gt=0, le=120)
 
     is_published: bool = Field(False)
 
     content: str
-    preview_file_id: UUID = Field()
-    preview_og_file_id: UUID = Field()
-
-    class Config:
-        from_attributes = True
-
-
-class BasicEditablePost(BaseModel):
-    title: str = Field(max_length=100)
-    short_description: str = Field(max_length=300)
-    reading_time: int = Field(gt=0, le=120)
-
-    is_published: bool = Field(False)
-
-    content: str = Field(max_length=30_000)
-
     preview_file_id: Optional[UUID] = Field(None)
     preview_og_file_id: Optional[UUID] = Field(None)
 
@@ -46,21 +37,28 @@ class BasicEditablePost(BaseModel):
         from_attributes = True
 
 
-class GetPostResponse(BaseModel):
-    id: UUID
-    created_at: datetime
-    updated_at: datetime
+class BasicEditablePost(BaseModel):
+    short_description: str = Field(max_length=300)
+    web_description: str = Field(max_length=300)
+    og_description: str = Field(max_length=300)
+
+    title: str = Field(max_length=100)
+    web_title: str = Field(max_length=100)
+    og_title: str = Field(max_length=100)
+
+    reading_time: int = Field(gt=0, le=120)
 
     is_published: bool = Field(False)
 
-    title: str = Field(max_length=100)
-    slug: str = Field(max_length=150)
-    short_description: str = Field(max_length=300)
-    reading_time: int = Field(gt=0, le=120)
+    content: str
+    preview_file_id: Optional[UUID] = Field(None)
+    preview_og_file_id: Optional[UUID] = Field(None)
 
-    preview_file_id: Optional[UUID] = Field()
-    preview_og_file_id: Optional[UUID] = Field()
+    class Config:
+        from_attributes = True
 
+
+class GetPostResponse(BasicPost):
     class Config:
         from_attributes = True
 
@@ -70,14 +68,19 @@ class CreatePost(BasicEditablePost):
 
 
 class UpdatePost(BaseModel):
-    title: Optional[str] = Field(None, max_length=100)
-    slug: Optional[str] = Field(None, max_length=150)
-    short_description: Optional[str] = Field(None, max_length=300)
-    reading_time: Optional[int] = Field(None, gt=0, le=120)
+    short_description: Optional[str] = Field(max_length=300)
+    web_description: Optional[str] = Field(max_length=300)
+    og_description: Optional[str] = Field(max_length=300)
 
-    is_published: Optional[bool] = Field(None)
+    title: Optional[str] = Field(max_length=100)
+    web_title: Optional[str] = Field(max_length=100)
+    og_title: Optional[str] = Field(max_length=100)
 
-    content: Optional[str] = Field(None, max_length=30_000)
+    reading_time: Optional[int] = Field(gt=0, le=120)
+
+    is_published: Optional[bool] = Field(False)
+
+    content: Optional[str] = Field(max_length=30_000)
 
     preview_file_id: Optional[UUID] = Field(None)
     preview_og_file_id: Optional[UUID] = Field(None)
