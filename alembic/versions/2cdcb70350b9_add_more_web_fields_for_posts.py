@@ -23,7 +23,7 @@ def upgrade() -> None:
     op.add_column('posts', sa.Column('web_description', sa.String(length=300), nullable=True))
     op.add_column('posts', sa.Column('og_description', sa.String(length=300), nullable=True))
     op.add_column('posts', sa.Column('og_title', sa.String(length=150), nullable=True))
-    op.add_column('posts', sa.Column('views_count', sa.Integer(), nullable=False))
+    op.add_column('posts', sa.Column('views_count', sa.Integer(), nullable=False, server_default="0"))
     op.alter_column('posts', 'short_description',
                existing_type=sa.VARCHAR(length=300),
                nullable=True)
