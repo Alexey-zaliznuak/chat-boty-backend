@@ -1,4 +1,14 @@
-from src.share.content.schemas import BasicBlogContent, BasicEditableBlogContent, UpdateBlogContent
+from enum import Enum
+
+from src.share.content.schemas import (
+    BasicBlogContent,
+    BasicEditableBlogContent,
+    UpdateBlogContent
+)
+
+class UniqueFieldsEnum(str, Enum):
+    id = "id"
+    slug = "slug"
 
 class BasicCase(BasicBlogContent):
     pass
