@@ -54,7 +54,6 @@ class GetBlogContent(BaseModel):
     web_title: Optional[str] = Field(max_length=100)
     og_title: Optional[str] = Field(max_length=100)
 
-    content: str = Field()
     keywords: Optional[str] = Field(max_length=150)
 
     is_published: bool = Field(False)
