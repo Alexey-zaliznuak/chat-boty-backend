@@ -25,11 +25,13 @@ class BasicBlogContent(BaseModel):
     web_title: str = Field(max_length=100)
     og_title: str = Field(max_length=100)
 
-    reading_time: int = Field(gt=0, le=120)
+    content: str = Field()
+    keywords: str = Field(max_length=150)
 
     is_published: bool = Field(False)
+    reading_time: int = Field(gt=0, le=120)
+    views_count: int = Field(gt=0)
 
-    content: str
     preview_file_id: Optional[UUID] = Field(None)
     preview_og_file_id: Optional[UUID] = Field(None)
 
@@ -46,11 +48,13 @@ class BasicEditableBlogContent(BaseModel):
     web_title: str = Field(max_length=100)
     og_title: str = Field(max_length=100)
 
-    reading_time: int = Field(gt=0, le=120)
+    content: str = Field()
+    keywords: str = Field(max_length=150)
 
     is_published: bool = Field(False)
+    reading_time: int = Field(gt=0, le=120)
+    views_count: int = Field(gt=0)
 
-    content: str
     preview_file_id: Optional[UUID] = Field(None)
     preview_og_file_id: Optional[UUID] = Field(None)
 
@@ -76,11 +80,12 @@ class UpdateBlogContent(BaseModel):
     web_title: Optional[str] = Field(max_length=100)
     og_title: Optional[str] = Field(max_length=100)
 
-    reading_time: Optional[int] = Field(gt=0, le=120)
+    content: Optional[str] = Field()
+    keywords: Optional[str] = Field(max_length=150)
 
     is_published: Optional[bool] = Field(False)
-
-    content: Optional[str] = Field(max_length=30_000)
+    reading_time: Optional[int] = Field(gt=0, le=120)
+    views_count: Optional[int] = Field(gt=0)
 
     preview_file_id: Optional[UUID] = Field(None)
     preview_og_file_id: Optional[UUID] = Field(None)
