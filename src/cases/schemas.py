@@ -3,6 +3,7 @@ from enum import Enum
 from src.share.content.schemas import (
     BasicBlogContent,
     BasicEditableBlogContent,
+    GetBlogContent,
     UpdateBlogContent
 )
 
@@ -16,7 +17,7 @@ class BasicCase(BasicBlogContent):
 class BasicEditableCase(BasicEditableBlogContent):
     pass
 
-class GetCaseResponse(BasicCase):
+class GetCaseResponse(GetBlogContent):
     class Config:
         from_attributes = True
 
