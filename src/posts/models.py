@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 from sqlalchemy import Boolean, CheckConstraint, Column, DateTime, Integer, String, Text, event, select
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declarative_base
@@ -17,16 +17,25 @@ class Post(Base):
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
-    is_published = Column(Boolean, default=False, nullable=False)
-
-    title = Column(String(100), nullable=False)
     slug = Column(String(150), unique=True, index=True, nullable=False)
-    short_description = Column(String(300), nullable=False)
+
+    short_description = Column(String(300), nullable=True)
+    web_description = Column(String(300), nullable=True)
+    og_description = Column(String(300), nullable=True)
+
+    title = Column(String(100), nullable=True)
+    web_title = Column(String(150), nullable=True)
+    og_title = Column(String(150), nullable=True)
+
+    keywords = Column(String(150), nullable=True)
     reading_time = Column(Integer, CheckConstraint('reading_time > 0 AND reading_time <= 120'), nullable=False)
 
-    content = Column(Text, nullable=True)
     preview_file_id = Column(UUID(as_uuid=True), nullable=True)
     preview_og_file_id = Column(UUID(as_uuid=True), nullable=True)
+
+    content = Column(Text, nullable=True)
+    is_published = Column(Boolean, default=False, nullable=False)
+    views_count = Column(Integer, nullable=False, default=0)
 
     @staticmethod
     async def generate_slug(title: str, session: AsyncSession):
