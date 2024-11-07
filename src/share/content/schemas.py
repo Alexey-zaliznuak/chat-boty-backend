@@ -17,16 +17,16 @@ class BasicBlogContent(BaseModel):
 
     slug: str = Field(max_length=150)
 
-    short_description: str = Field(max_length=300)
-    web_description: str = Field(max_length=300)
-    og_description: str = Field(max_length=300)
+    short_description: Optional[str] = Field(max_length=300)
+    web_description: Optional[str] = Field(max_length=300)
+    og_description: Optional[str] = Field(max_length=300)
 
     title: str = Field(max_length=100)
-    web_title: str = Field(max_length=100)
-    og_title: str = Field(max_length=100)
+    web_title: Optional[str] = Field(max_length=100)
+    og_title: Optional[str] = Field(max_length=100)
 
-    content: str = Field()
-    keywords: str = Field(max_length=150)
+    content: Optional[str] = Field()
+    keywords: Optional[str] = Field(max_length=150)
 
     is_published: bool = Field(False)
     reading_time: int = Field(gt=0, le=120)
@@ -46,7 +46,7 @@ class GetBlogContent(BaseModel):
 
     slug: str = Field(max_length=150)
 
-    short_description: str = Field(max_length=300)
+    short_description: Optional[str] = Field(max_length=300)
     web_description: Optional[str] = Field(max_length=300)
     og_description: Optional[str] = Field(max_length=300)
 
@@ -65,20 +65,20 @@ class GetBlogContent(BaseModel):
 
 
 class BasicEditableBlogContent(BaseModel):
-    short_description: str = Field(max_length=300)
-    web_description: str = Field(max_length=300)
-    og_description: str = Field(max_length=300)
+    short_description: Optional[str] = Field(None, max_length=300)
+    web_description: Optional[str] = Field(None, max_length=300)
+    og_description: Optional[str] = Field(None, max_length=300)
 
-    title: str = Field(max_length=100)
-    web_title: str = Field(max_length=100)
-    og_title: str = Field(max_length=100)
+    title: Optional[str] = Field(None, max_length=100)
+    web_title: Optional[str] = Field(None, max_length=100)
+    og_title: Optional[str] = Field(None, max_length=100)
 
-    content: str = Field()
-    keywords: str = Field(max_length=150)
+    content: Optional[str] = Field(None)
+    keywords: Optional[str] = Field(None, max_length=150)
 
     is_published: bool = Field(False)
     reading_time: int = Field(gt=0, le=120)
-    views_count: int = Field(gt=0)
+    views_count: int = Field(ge=0)
 
     preview_file_id: Optional[UUID] = Field(None)
     preview_og_file_id: Optional[UUID] = Field(None)
@@ -93,7 +93,7 @@ class GetBlogContentResponse(BasicBlogContent):
 
 
 class CreateBlogContent(BasicEditableBlogContent):
-    pass
+    title: str = Field(max_length=100)
 
 
 class UpdateBlogContent(BaseModel):

@@ -23,7 +23,7 @@ class Post(Base):
     web_description = Column(String(300), nullable=True)
     og_description = Column(String(300), nullable=True)
 
-    title = Column(String(100), nullable=True)
+    title = Column(String(100), nullable=False)
     web_title = Column(String(150), nullable=True)
     og_title = Column(String(150), nullable=True)
 
@@ -35,7 +35,7 @@ class Post(Base):
 
     content = Column(Text, nullable=True)
     is_published = Column(Boolean, default=False, nullable=False)
-    views_count = Column(Integer, nullable=False, default=0)
+    views_count = Column(Integer, default=0, nullable=False)
 
     @staticmethod
     async def generate_slug(title: str, session: AsyncSession):
