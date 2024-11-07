@@ -110,7 +110,7 @@ class UpdateBlogContent(BaseModel):
 
     is_published: Optional[bool] = Field(False)
     reading_time: Optional[int] = Field(gt=0, le=120)
-    views_count: Optional[int] = Field(gt=0)
+    views_count: Optional[int] = Field(ge=0)
 
     preview_file_id: Optional[UUID] = Field(None)
     preview_og_file_id: Optional[UUID] = Field(None)
