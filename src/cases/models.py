@@ -17,7 +17,7 @@ class Case(Base):
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
-    slug = Column(String(150), unique=True, index=True, nullable=False)
+    slug = Column(String(250), unique=True, index=True, nullable=False)
 
     short_description = Column(String(300), nullable=False)
     web_description = Column(String(300), nullable=True)
@@ -27,7 +27,7 @@ class Case(Base):
     web_title = Column(String(150), nullable=True)
     og_title = Column(String(150), nullable=True)
 
-    keywords = Column(String(150), nullable=True)
+    keywords = Column(String(250), nullable=True)
     reading_time = Column(Integer, CheckConstraint('reading_time > 0 AND reading_time <= 120'), nullable=False)
 
     preview_file_id = Column(UUID(as_uuid=True), nullable=True)
