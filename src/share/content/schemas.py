@@ -15,7 +15,7 @@ class BasicBlogContent(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-    slug: str = Field(max_length=150)
+    slug: str = Field(max_length=250)
 
     short_description: Optional[str] = Field(max_length=300)
     web_description: Optional[str] = Field(max_length=300)
@@ -26,7 +26,7 @@ class BasicBlogContent(BaseModel):
     og_title: Optional[str] = Field(max_length=100)
 
     content: Optional[str] = Field()
-    keywords: Optional[str] = Field(max_length=150)
+    keywords: Optional[str] = Field(max_length=250)
 
     is_published: bool = Field(False)
     reading_time: int = Field(gt=0, le=120)
