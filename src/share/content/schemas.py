@@ -54,7 +54,7 @@ class GetBlogContent(BaseModel):
     web_title: Optional[str] = Field(max_length=100)
     og_title: Optional[str] = Field(max_length=100)
 
-    keywords: Optional[str] = Field(max_length=150)
+    keywords: Optional[str] = Field(max_length=250)
 
     is_published: bool = Field(False)
     reading_time: int = Field(gt=0, le=120)
@@ -74,7 +74,7 @@ class BasicEditableBlogContent(BaseModel):
     og_title: Optional[str] = Field(None, max_length=100)
 
     content: Optional[str] = Field(None)
-    keywords: Optional[str] = Field(None, max_length=150)
+    keywords: Optional[str] = Field(None, max_length=250)
 
     is_published: bool = Field(False)
     reading_time: int = Field(gt=0, le=120)
@@ -106,7 +106,7 @@ class UpdateBlogContent(BaseModel):
     og_title: Optional[str] = Field(max_length=100)
 
     content: Optional[str] = Field()
-    keywords: Optional[str] = Field(max_length=150)
+    keywords: Optional[str] = Field(max_length=250)
 
     is_published: Optional[bool] = Field(False)
     reading_time: Optional[int] = Field(gt=0, le=120)
